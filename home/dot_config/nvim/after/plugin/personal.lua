@@ -36,7 +36,22 @@ registry.refresh(function()
 	end
 end)
 
-require("nvim-treesitter").install({ "blade", "gomod", "gosum", "gowork", "phpdoc", "vue" })
+vim.g.personal_mason_tools = tools
+
+-- Parsers need the tree-sitter CLI, which Mason installs on a fresh machine.
+local parsers = { "blade", "gomod", "gosum", "gowork", "phpdoc", "vue" }
+vim.g.personal_parsers = parsers
+if vim.fn.executable("tree-sitter") == 1 then
+	require("nvim-treesitter").install(parsers)
+else
+	vim.api.nvim_create_autocmd("User", {
+		pattern = "MasonToolsUpdateCompleted",
+		once = true,
+		callback = function()
+			require("nvim-treesitter").install(parsers)
+		end,
+	})
+end
 
 -- Vue types are served by vtsls through this plugin; vue_ls handles the rest.
 vim.lsp.config("vtsls", {
