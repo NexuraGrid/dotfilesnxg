@@ -1,0 +1,7 @@
+# Upstream config, downloaded from its author at a pinned commit. It has no
+# license, so it is not redistributed here. To update, change the commit below.
+[".config/nvim"]
+    type = "archive"
+    url = "https://github.com/craftzdog/dotfiles/archive/7c50fa72f64aada314c124cea005fd923e9f5c0f.tar.gz"
+    stripComponents = 3
+    include = ["*/dot_config/nvim", "*/dot_config/nvim/**"]

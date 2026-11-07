@@ -1,0 +1,13 @@
+# bootstrap: {{ include "dot_config/nvim/scripts/bootstrap.lua" | sha256sum }}
+# lockfile:  {{ include "dot_config/nvim/nvim-pack-lock.json" | sha256sum }}
+$ErrorActionPreference = 'Stop'
+
+# Tools installed moments ago are not on this process's PATH yet.
+$machinePath = [Environment]::GetEnvironmentVariable('Path', 'Machine')
+$userPath = [Environment]::GetEnvironmentVariable('Path', 'User')
+$env:Path = "$machinePath;$userPath"
+$env:XDG_CONFIG_HOME = Join-Path $HOME '.config'
+
+$bootstrap = Join-Path $env:XDG_CONFIG_HOME 'nvim\scripts\bootstrap.lua'
+Write-Host '==> Installing Neovim plugins, language servers and parsers (this takes a few minutes)'
+nvim --headless -c "luafile $bootstrap"

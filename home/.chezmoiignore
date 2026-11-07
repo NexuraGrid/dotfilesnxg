@@ -1,0 +1,5 @@
+{{ if eq .chezmoi.os "windows" }}
+.chezmoiscripts/unix/**
+{{ else }}
+.chezmoiscripts/windows/**
+{{ end }}

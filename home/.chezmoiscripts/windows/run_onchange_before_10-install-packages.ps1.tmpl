@@ -1,0 +1,24 @@
+$ErrorActionPreference = 'Stop'
+
+# Keeps a single config layout: Neovim reads ~\.config\nvim on every platform.
+$configHome = Join-Path $HOME '.config'
+if (-not [Environment]::GetEnvironmentVariable('XDG_CONFIG_HOME', 'User')) {
+    [Environment]::SetEnvironmentVariable('XDG_CONFIG_HOME', $configHome, 'User')
+}
+
+function Install-Package([string]$Command, [string]$Id) {
+    if ($Command -and (Get-Command $Command -ErrorAction SilentlyContinue)) {
+        return
+    }
+    Write-Host "==> Installing $Id"
+    winget install --id $Id --exact --silent --accept-source-agreements --accept-package-agreements
+    if ($LASTEXITCODE -ne 0) {
+        Write-Warning "winget could not install $Id (exit code $LASTEXITCODE)"
+    }
+}
+
+{{ range .packages -}}
+{{ if .winget -}}
+Install-Package {{ .command | default "" | squote }} {{ .winget | squote }}
+{{ end -}}
+{{ end -}}

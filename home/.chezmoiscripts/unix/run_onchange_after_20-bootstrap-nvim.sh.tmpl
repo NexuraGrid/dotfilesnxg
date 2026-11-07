@@ -1,0 +1,20 @@
+#!/bin/bash
+# bootstrap: {{ include "dot_config/nvim/scripts/bootstrap.lua" | sha256sum }}
+# lockfile:  {{ include "dot_config/nvim/nvim-pack-lock.json" | sha256sum }}
+set -euo pipefail
+
+for candidate in /home/linuxbrew/.linuxbrew/bin/brew "$HOME/.linuxbrew/bin/brew" /opt/homebrew/bin/brew /usr/local/bin/brew; do
+  if [ -x "$candidate" ]; then
+    eval "$("$candidate" shellenv)"
+    break
+  fi
+done
+
+if ! nvim --headless -c 'lua if vim.fn.has("nvim-0.12") == 0 then vim.cmd("cquit") end' -c 'qa!' 2>/dev/null; then
+  echo "This config needs Neovim 0.12+. Found: $(nvim --version | head -1)" >&2
+  exit 1
+fi
+
+echo "==> Installing Neovim plugins, language servers and parsers (this takes a few minutes)"
+nvim --headless -c "luafile $HOME/.config/nvim/scripts/bootstrap.lua"
+echo

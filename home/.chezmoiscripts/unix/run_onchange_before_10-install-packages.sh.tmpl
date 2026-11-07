@@ -1,0 +1,40 @@
+#!/bin/bash
+set -euo pipefail
+
+BREW=""
+for candidate in /home/linuxbrew/.linuxbrew/bin/brew "$HOME/.linuxbrew/bin/brew" /opt/homebrew/bin/brew /usr/local/bin/brew; do
+  [ -x "$candidate" ] && BREW="$candidate" && break
+done
+
+if [ -z "$BREW" ]; then
+  echo "==> Installing Homebrew"
+  NONINTERACTIVE=1 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+  for candidate in /home/linuxbrew/.linuxbrew/bin/brew "$HOME/.linuxbrew/bin/brew" /opt/homebrew/bin/brew; do
+    [ -x "$candidate" ] && BREW="$candidate" && break
+  done
+  [ -n "$BREW" ] || { echo "Homebrew installation not found" >&2; exit 1; }
+  for rc in "$HOME/.profile" "$HOME/.bashrc"; do
+    echo "eval \"\$($BREW shellenv)\"" >> "$rc"
+  done
+fi
+eval "$("$BREW" shellenv)"
+
+# On WSL the Windows PATH is inherited; a /mnt/c tool must not count as installed.
+has_native() {
+  local found
+  found="$(command -v "$1" 2>/dev/null)" && [[ "$found" != /mnt/* ]]
+}
+
+ensure() {
+  if has_native "$1"; then
+    return 0
+  fi
+  echo "==> Installing $2"
+  HOMEBREW_NO_AUTO_UPDATE=1 brew install "$2"
+}
+
+{{ range .packages -}}
+{{ if and .brew .command -}}
+ensure {{ .command | quote }} {{ .brew | quote }}
+{{ end -}}
+{{ end -}}
