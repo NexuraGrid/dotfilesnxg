@@ -25,12 +25,11 @@ has_native() {
   found="$(command -v "$1" 2>/dev/null)" && [[ "$found" != /mnt/* ]]
 }
 
+missing=()
 ensure() {
-  if has_native "$1"; then
-    return 0
+  if ! has_native "$1"; then
+    missing+=("$2")
   fi
-  echo "==> Installing $2"
-  HOMEBREW_NO_AUTO_UPDATE=1 brew install "$2"
 }
 
 {{ range .packages -}}
@@ -38,6 +37,12 @@ ensure() {
 ensure {{ get . "command" | quote }} {{ get . "brew" | quote }}
 {{ end -}}
 {{ end }}
+# One brew call resolves shared dependencies once instead of per package.
+if [ "${#missing[@]}" -gt 0 ]; then
+  echo "==> Installing ${missing[*]}"
+  HOMEBREW_NO_AUTO_UPDATE=1 HOMEBREW_NO_INSTALL_CLEANUP=1 brew install "${missing[@]}"
+fi
+
 # Node comes from fnm. A machine that already has Node keeps its setup.
 if ! has_native node; then
   echo "==> Installing Node LTS with fnm"

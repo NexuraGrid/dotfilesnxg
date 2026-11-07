@@ -2,8 +2,8 @@
 -- Mason and Treesitter installs have finished, retries anything missing once,
 -- and exits non-zero naming what could not be installed.
 local TIMEOUT_MS = 15 * 60 * 1000
-local POLL_MS = 5000
-local IDLE_POLLS = 6
+local POLL_MS = 2000
+local IDLE_POLLS = 5
 
 local started_at = vim.uv.now()
 local last_total = -1
