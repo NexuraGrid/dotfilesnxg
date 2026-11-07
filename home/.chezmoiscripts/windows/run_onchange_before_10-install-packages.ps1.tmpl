@@ -21,4 +21,30 @@ function Install-Package([string]$Command, [string]$Id) {
 {{ if get . "winget" -}}
 Install-Package {{ get . "command" | squote }} {{ get . "winget" | squote }}
 {{ end -}}
-{{ end -}}
+{{ end }}
+$machinePath = [Environment]::GetEnvironmentVariable('Path', 'Machine')
+$userPath = [Environment]::GetEnvironmentVariable('Path', 'User')
+$env:Path = "$machinePath;$userPath"
+
+# Node comes from fnm. A machine that already has Node keeps its setup.
+if (-not (Get-Command node -ErrorAction SilentlyContinue)) {
+    Write-Host '==> Installing Node LTS with fnm'
+    fnm env --shell powershell | Out-String | Invoke-Expression
+    fnm install --lts
+    fnm default lts-latest
+
+    # Windows blocks every profile script under the default Restricted policy.
+    if ((Get-ExecutionPolicy -Scope CurrentUser) -eq 'Undefined') {
+        Set-ExecutionPolicy -Scope CurrentUser -ExecutionPolicy RemoteSigned -Force
+    }
+
+    $hook = 'fnm env --use-on-cd --shell powershell | Out-String | Invoke-Expression'
+    $documents = [Environment]::GetFolderPath('MyDocuments')
+    foreach ($folder in @('WindowsPowerShell', 'PowerShell')) {
+        $profilePath = Join-Path $documents "$folder\Microsoft.PowerShell_profile.ps1"
+        New-Item -ItemType Directory -Force -Path (Split-Path $profilePath) | Out-Null
+        if (-not (Test-Path $profilePath) -or -not (Select-String -Path $profilePath -SimpleMatch 'fnm env' -Quiet)) {
+            Add-Content -Path $profilePath -Value $hook
+        }
+    }
+}

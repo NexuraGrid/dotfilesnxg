@@ -8,7 +8,7 @@ packages:
   - { command: fd, brew: fd, winget: sharkdp.fd }
   - { command: fzf, brew: fzf, winget: junegunn.fzf }
   - { command: lazygit, brew: lazygit, winget: JesseDuffield.lazygit }
-  - { command: node, brew: node, winget: OpenJS.NodeJS.LTS }
+  - { command: fnm, brew: fnm, winget: Schniz.fnm }
   - { command: go, brew: go, winget: GoLang.Go }
   - { command: gcc, brew: gcc, winget: BrechtSanders.WinLibs.POSIX.UCRT }
   - { command: unzip, brew: unzip }

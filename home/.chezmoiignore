@@ -1,5 +1,6 @@
 {{ if eq .chezmoi.os "windows" }}
 .chezmoiscripts/unix/**
+.config/fish
 {{ else }}
 .chezmoiscripts/windows/**
 {{ end }}

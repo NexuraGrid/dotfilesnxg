@@ -46,6 +46,8 @@ Before `chezmoi add`, check the file for tokens, passwords and private hosts. **
 
 **Add a system package:** add one line to `home/.chezmoidata/packages.yaml`.
 
+**Node:** managed with [fnm](https://github.com/Schniz/fnm). A fresh machine gets the LTS version as default. A machine that already has Node keeps its setup.
+
 **Add a config for another tool:** run `chezmoi add` on it. It lands under `home/` and every machine gets it on the next `chezmoi update`.
 
 **Change Neovim:** edit `after/plugin/personal.lua`. Files that come from upstream are overwritten on apply, so do not edit them directly.

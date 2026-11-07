@@ -8,6 +8,11 @@ $userPath = [Environment]::GetEnvironmentVariable('Path', 'User')
 $env:Path = "$machinePath;$userPath"
 $env:XDG_CONFIG_HOME = Join-Path $HOME '.config'
 
+# Mason needs node and npm; this process has not loaded fnm yet.
+if (Get-Command fnm -ErrorAction SilentlyContinue) {
+    fnm env --shell powershell | Out-String | Invoke-Expression
+}
+
 $bootstrap = Join-Path $env:XDG_CONFIG_HOME 'nvim\scripts\bootstrap.lua'
 Write-Host '==> Installing Neovim plugins, language servers and parsers (this takes a few minutes)'
 nvim --headless -c "luafile $bootstrap"

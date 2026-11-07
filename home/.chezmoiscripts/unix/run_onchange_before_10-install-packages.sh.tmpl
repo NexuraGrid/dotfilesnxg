@@ -37,4 +37,17 @@ ensure() {
 {{ if and (get . "brew") (get . "command") -}}
 ensure {{ get . "command" | quote }} {{ get . "brew" | quote }}
 {{ end -}}
-{{ end -}}
+{{ end }}
+# Node comes from fnm. A machine that already has Node keeps its setup.
+if ! has_native node; then
+  echo "==> Installing Node LTS with fnm"
+  eval "$(fnm env --shell bash)"
+  fnm install --lts
+  fnm default lts-latest
+  for rc in "$HOME/.bashrc" "$HOME/.zshrc"; do
+    shell_name="$(basename "$rc" | sed -e 's/^\.//' -e 's/rc$//')"
+    if [ -f "$rc" ] && ! grep -q 'fnm env' "$rc"; then
+      echo "eval \"\$(fnm env --use-on-cd --shell $shell_name)\"" >> "$rc"
+    fi
+  done
+fi

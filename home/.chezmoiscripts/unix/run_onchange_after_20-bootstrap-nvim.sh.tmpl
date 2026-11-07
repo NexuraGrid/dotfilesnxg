@@ -10,6 +10,11 @@ for candidate in /home/linuxbrew/.linuxbrew/bin/brew "$HOME/.linuxbrew/bin/brew"
   fi
 done
 
+# Mason needs node and npm; a fresh shell has not loaded fnm yet.
+if command -v fnm >/dev/null 2>&1; then
+  eval "$(fnm env --shell bash)"
+fi
+
 if ! nvim --headless -c 'lua if vim.fn.has("nvim-0.12") == 0 then vim.cmd("cquit") end' -c 'qa!' 2>/dev/null; then
   echo "This config needs Neovim 0.12+. Found: $(nvim --version | head -1)" >&2
   exit 1
