@@ -1,5 +1,6 @@
 # System packages. To add one, add a line here: `command` is what gets checked,
 # `brew` applies to Linux, WSL and macOS, `winget` applies to Windows.
+# `winget_command` overrides `command` on Windows, where some names differ.
 # An entry without `command` is always passed to the package manager.
 packages:
   - { command: git, brew: git, winget: Git.Git }
@@ -10,6 +11,7 @@ packages:
   - { command: lazygit, brew: lazygit, winget: JesseDuffield.lazygit }
   - { command: fnm, brew: fnm, winget: Schniz.fnm }
   - { command: go, brew: go, winget: GoLang.Go }
+  - { command: python3, brew: python, winget: Python.Python.3.14, winget_command: python }
   - { command: gcc, brew: gcc, winget: BrechtSanders.WinLibs.POSIX.UCRT }
   - { command: unzip, brew: unzip }
   - { winget: DEVCOM.JetBrainsMonoNerdFont }

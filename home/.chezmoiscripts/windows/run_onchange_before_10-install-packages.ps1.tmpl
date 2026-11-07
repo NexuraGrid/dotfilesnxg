@@ -7,7 +7,9 @@ if (-not [Environment]::GetEnvironmentVariable('XDG_CONFIG_HOME', 'User')) {
 }
 
 function Install-Package([string]$Command, [string]$Id) {
-    if ($Command -and (Get-Command $Command -ErrorAction SilentlyContinue)) {
+    # WindowsApps holds Microsoft Store stubs, such as a python.exe that only opens the Store.
+    $found = if ($Command) { Get-Command $Command -ErrorAction SilentlyContinue | Select-Object -First 1 }
+    if ($found -and $found.Source -notlike '*\WindowsApps\*') {
         return
     }
     Write-Host "==> Installing $Id"
@@ -19,7 +21,7 @@ function Install-Package([string]$Command, [string]$Id) {
 
 {{ range .packages -}}
 {{ if get . "winget" -}}
-Install-Package {{ get . "command" | squote }} {{ get . "winget" | squote }}
+Install-Package {{ default (get . "command") (get . "winget_command") | squote }} {{ get . "winget" | squote }}
 {{ end -}}
 {{ end }}
 $machinePath = [Environment]::GetEnvironmentVariable('Path', 'Machine')
