@@ -34,7 +34,7 @@ ensure() {
 }
 
 {{ range .packages -}}
-{{ if and .brew .command -}}
-ensure {{ .command | quote }} {{ .brew | quote }}
+{{ if and (get . "brew") (get . "command") -}}
+ensure {{ get . "command" | quote }} {{ get . "brew" | quote }}
 {{ end -}}
 {{ end -}}

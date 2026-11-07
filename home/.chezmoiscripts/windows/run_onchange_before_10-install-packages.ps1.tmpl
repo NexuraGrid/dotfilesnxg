@@ -18,7 +18,7 @@ function Install-Package([string]$Command, [string]$Id) {
 }
 
 {{ range .packages -}}
-{{ if .winget -}}
-Install-Package {{ .command | default "" | squote }} {{ .winget | squote }}
+{{ if get . "winget" -}}
+Install-Package {{ get . "command" | squote }} {{ get . "winget" | squote }}
 {{ end -}}
 {{ end -}}
