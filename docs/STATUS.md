@@ -2,19 +2,18 @@
 
 Last updated: 2026-11-06. Read this first when resuming work.
 
-**The one-command install is not verified yet.** The latest commit has not passed a clean install, and Windows has never been run. Do not rely on it on a new machine until the checks below pass.
+**The Linux install passes on clean Ubuntu but takes about 14 minutes, and Windows has never been run.** Do not rely on `install.ps1` until it has.
 
 ## Pending, in order
 
-1. Run the clean Ubuntu install with per-stage timing and confirm it passes.
-2. Confirm that a new terminal resolves `node` through fnm.
-3. Report the real time per stage. The user finds about 15 minutes unacceptable, so cut more if it is still high.
-4. Run `install.ps1` on a real Windows machine.
-5. Run `chezmoi init` on the main WSL machine, confirm `chezmoi diff` is empty, and measure how long it takes.
-6. Decide on the local `~/.config/nvim/.git` repository, which chezmoi makes redundant.
-7. Decide whether to migrate the main WSL machine from nvm to fnm. See the decisions below.
-8. When a Laravel project exists, add Pint through Docker. It needs an async formatter, because `docker exec` alone costs about 420 ms and format-on-save stops at 500 ms.
-9. Add the next configs (fish, zellij, git). Check each for secrets first: this repository is public.
+1. Confirm that a new terminal resolves `node` through fnm.
+2. Measure the real time per stage and cut it. The user finds about 15 minutes unacceptable, and batching brew installs did not noticeably help.
+3. Run `install.ps1` on a real Windows machine.
+4. Run `chezmoi init` on the main WSL machine, confirm `chezmoi diff` is empty, and measure how long it takes.
+5. Decide on the local `~/.config/nvim/.git` repository, which chezmoi makes redundant.
+6. Decide whether to migrate the main WSL machine from nvm to fnm. See the decisions below.
+7. When a Laravel project exists, add Pint through Docker. It needs an async formatter, because `docker exec` alone costs about 420 ms and format-on-save stops at 500 ms.
+8. Add the next configs (fish, zellij, git). Check each for secrets first: this repository is public.
 
 ## Verification so far
 
@@ -24,9 +23,9 @@ Last updated: 2026-11-06. Read this first when resuming work.
 | Applying files in an isolated home | Passing: matches the working config, plus `scripts/` |
 | Secret scan of this repository | Passing |
 | Bash, PowerShell and fish syntax | Passing, static checks only |
-| Clean Ubuntu install, last complete run | Failed on one item: `basedpyright` needs `python3`; 46 parsers and `gopls` installed |
-| Python fix and speedups (latest commits) | Not verified: the timed run was still in progress when this was written |
-| `node` in a new terminal through fnm | Not verified: fnm installed Node, but the run stopped before this check |
+| Clean Ubuntu install at `fc9640a` | Passing: exit 0, 25 Mason packages, 46 parsers, no retries, about 14 minutes in total |
+| Time per stage | Not measured: the log buffered, so all lines share one timestamp |
+| `node` in a new terminal through fnm | Not verified: fnm installed Node, but the test's own check had a syntax error |
 | Windows install | Never run: only template rendering, syntax and winget package IDs were checked |
 | React and Tailwind behavior in Neovim | Not tested with real files |
 
